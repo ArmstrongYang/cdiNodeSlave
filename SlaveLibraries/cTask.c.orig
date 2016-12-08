@@ -1,0 +1,104 @@
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
+#include <string.h>
+#include "cTask.h"
+
+osMutexId WifiUart_MutexHandle;
+
+void WifiUart_MutexFun(void) 
+{
+
+	osMutexDef(WifiUart_Mutex);
+	WifiUart_MutexHandle = osMutexCreate(osMutex(WifiUart_Mutex));
+	
+}
+uint16_t gLength = 0;			//16kbytes,6bytes/frame =2730.666
+
+void cTask_Init(void) {
+
+	cLEDs_Init();
+	cWIFI_Init();
+}
+void cTask_List(void) {
+
+  cLEDs_Task();
+	cWIFI_Task();
+}
+
+/*任务1： cLEDs  开始*/
+osThreadId cLEDs_TaskHandle;
+char cLEDs_status = 1;	//0：红色代表电源正常，1：绿色闪烁代表出错，2：蓝色代表需要重启或电源电压太低
+void cLEDs_TaskFun(void const * argument) {
+
+  while(1){
+		if(cLEDs_status==0){
+			cLEDs_Write(R,ON);
+			cLEDs_Write(G,OFF);
+			cLEDs_Write(B,OFF);
+			osDelay(1000);
+		}
+		else if(cLEDs_status==1){
+			cLEDs_Write(R,OFF);
+			cLEDs_Toggle(G);
+			cLEDs_Write(B,OFF);
+			osDelay(1000);
+		}
+		else if(cLEDs_status==2){
+			cLEDs_Write(R,OFF);
+			cLEDs_Write(G,OFF);
+			cLEDs_Toggle(B);
+			osDelay(1000);
+		}
+		else{
+			cLEDs_Write(R,OFF);
+			cLEDs_Write(G,OFF);
+			cLEDs_Write(B,OFF);
+			osDelay(1000);
+		}
+  }
+}
+
+void cLEDs_Task(void) {
+ 
+  osThreadDef(cLEDs_Handle, cLEDs_TaskFun, osPriorityNormal, 0, 128);
+  cLEDs_TaskHandle = osThreadCreate(osThread(cLEDs_Handle), NULL);
+
+}
+/*任务1： cLEDs  结束*/
+
+/*任务2： cWIFI  开始*/
+osThreadId cWIFI_TaskHandle;
+void cWIFI_TaskFun(void const * argument)
+{
+	while(1){
+	printf("cWIFI_Fun\r\n");
+
+
+//	cWIFI_CWJAP(WIFI_SSID_NAME,WIFI_PASSWORD, 7800);
+//  cWIFI_JoinAP();
+	
+//	cWIFI_CIPSTART(TCP_SERVER_IPADDRESS, TCP_SERVER_PORT, 5000);
+	cWIFI_JoinTCP();
+	
+	char addr[]= "/HW002";
+//	printf("Report%d\r\n",cWIFI_ServerReport(addr,8000));
+
+	cWIFI_ServerDownload(addr,8000);
+//	cWIFI_ServerFinish(addr,8000);
+//	
+//	cWIFI_ServerStatus(addr,8000);
+	osDelay(10000);
+	}
+}
+
+void cWIFI_Task(void) {
+ 
+  osThreadDef(cWIFI_Handle, cWIFI_TaskFun, osPriorityNormal, 0, 128);
+  cWIFI_TaskHandle = osThreadCreate(osThread(cWIFI_Handle), NULL);
+
+}
+/*任务2： cWIFI  结束*/
+
+
