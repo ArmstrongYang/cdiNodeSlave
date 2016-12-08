@@ -572,9 +572,9 @@ Memory Map of the image
 
   Image Entry point : 0x080010b1
 
-  Load Region LR_IROM1 (Base: 0x08001000, Size: 0x00000c84, Max: 0x00003fff, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08001000, Size: 0x00000c84, Max: 0x00003000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Base: 0x08001000, Size: 0x00000c6c, Max: 0x00003fff, ABSOLUTE)
+    Execution Region ER_IROM1 (Base: 0x08001000, Size: 0x00000c6c, Max: 0x00003000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
