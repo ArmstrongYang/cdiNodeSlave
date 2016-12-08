@@ -1,10 +1,12 @@
 # cdiNodeSlave
 The project of the CDI slave sensor module.
+
 [toc]
 
 ## SlaveBoot 路径
 ## SlaveApp  路径（仅用于测试）
 ## SlaveModules(每个模块程序)
+##  SlaveLibraries(每个模块对应的单独.c 和.h文件)
 
 ## 2016-11-29 16:51:43
 + 增加SlaveBoot程序框架
