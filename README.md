@@ -1,9 +1,9 @@
-# cdiNodeSlave
+# [cdiNodeSlave](https://github.com/ArmstrongYang/cdiNodeSlave)
 The project of the CDI slave sensor module.
 
 [toc]
 
-## SlaveBoot 
+## [SlaveBoot](https://github.com/ArmstrongYang/cdiNodeSlave/tree/master/SlaveBoot)
 ### 路径
 /SlaveBoot/MDK-ARM/Platforms.uvprojx
 ### 功能
@@ -11,15 +11,18 @@ The project of the CDI slave sensor module.
 2. 该程序从0x8000000开始，占用空间0x1000bytes，也即4K大小；
 3. 其他应用程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
 4. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
-
+5. SlaveBoot储存空间分配方案图：
+![SlaveBoot](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveBoot%E5%AD%98%E5%82%A8%E5%92%8CRAM%E5%88%86%E9%85%8D%E5%9B%BE.png =100x100)
 ## SlaveApp （Demo文件，仅用于测试，详情参考SlaveModules）
 ### 路径
 /SlaveApp/MDK-ARM/Platforms.uvprojx
 ### 功能
 1. 该程序是整个程序的I2C通信和指令执行文件。
-2. 该程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
-3. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
-
+2. 模块启动后，Boot程序会自动执行跳转命令；
+3. 该程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
+4. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
+5. SlaveApp储存空间分配方案图：
+![SlaveApp](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveApp%E5%AD%98%E5%82%A8%E5%92%8CRAM%E5%88%86%E9%85%8D%E5%9B%BE.png =100x100)
 ## SlaveModules(每个模块程序)
 ### 模块列表
 #### 0x10-sRGB
