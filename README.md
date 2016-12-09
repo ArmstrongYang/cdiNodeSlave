@@ -3,10 +3,34 @@ The project of the CDI slave sensor module.
 
 [toc]
 
-## SlaveBoot 路径
-## SlaveApp  路径（仅用于测试）
+## SlaveBoot 
+### 路径
+/SlaveBoot/MDK-ARM/Platforms.uvprojx
+### 功能
+1. 该程序是整个程序的起始运行文件，需要在以后的每个模块中下载该程序。
+2. 该程序从0x8000000开始，占用空间0x1000bytes，也即4K大小；
+3. 其他应用程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
+4. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
+
+## SlaveApp （Demo文件，仅用于测试，详情参考SlaveModules）
+### 路径
+/SlaveApp/MDK-ARM/Platforms.uvprojx
+### 功能
+1. 该程序是整个程序的I2C通信和指令执行文件。
+2. 该程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
+3. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
+
 ## SlaveModules(每个模块程序)
-##  SlaveLibraries(每个模块对应的单独.c 和.h文件)
+### 模块列表
+#### 0x10-sRGB
+三色RGB模块
+#### 0x11-sKey
+按键模块
+
+## SlaveLibraries
+### 功能
+1. 存放每个模块对应的单独.c 和.h文件
+2. 便于模块文件的集中管理，除了此处每个模块不一样，其他部分基本上一致
 
 ## 2016-11-29 16:51:43
 + 增加SlaveBoot程序框架
