@@ -12,7 +12,7 @@ The project of the CDI slave sensor module.
 3. 其他应用程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
 4. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
 5. SlaveBoot储存空间分配方案图：
-![SlaveBoot](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveBoot%E5%AD%98%E5%82%A8%E5%92%8CRAM%E5%88%86%E9%85%8D%E5%9B%BE.png =100x100)
+![SlaveBoot](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveBoot存储和RAM分配图.png =100x100)
 
 ## SlaveApp （Demo文件，仅用于测试，详情参考SlaveModules）
 ### 路径
@@ -23,7 +23,7 @@ The project of the CDI slave sensor module.
 3. 该程序从0x8001000开始，占用空间0x3000bytes，也即12K大小；
 4. 如果有程序超过规定大小，Keil会提示编译不通过，因此不必担心。
 5. SlaveApp储存空间分配方案图：
-![SlaveApp](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveApp%E5%AD%98%E5%82%A8%E5%92%8CRAM%E5%88%86%E9%85%8D%E5%9B%BE.png =100x100)
+![SlaveApp](https://github.com/ArmstrongYang/cdiNodeSlave/blob/master/2016-12-09-SlaveApp存储和RAM分配图.png =100x100)
 
 ## SlaveModules(每个模块程序)
 ### 模块列表
