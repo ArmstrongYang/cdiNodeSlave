@@ -141,7 +141,7 @@ void i2cdata_init(I2C_DataType *I2C_Data)
 	I2C_Data->crc=0;
 	memset(I2C_Data->data,0,I2C_DATA_SIZE);
 	memset(I2C_Data->frame,0,I2C_FRAME_SIZE);
-
+	
 }
 
 void i2cdata_update(Device_DataType *device, I2C_DataType *I2C_Data)

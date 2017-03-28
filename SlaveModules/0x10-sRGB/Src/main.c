@@ -74,40 +74,40 @@ PUTCHAR_PROTOTYPE
 	return ch;  
 }
 
-#define APPLICATION_ADDRESS				(uint32_t)0x08001000
-#define SYSCFG_MemoryRemap_SRAM		((uint8_t)0x03)
+//#define APPLICATION_ADDRESS				(uint32_t)0x08001000
+//#define SYSCFG_MemoryRemap_SRAM		((uint8_t)0x03)
 
-#if   (defined ( __CC_ARM ))
-  __IO uint32_t VectorTable[48] __attribute__((at(0x20000000)));
-#elif (defined (__ICCARM__))
-#pragma location = 0x20000000
-  __no_init __IO uint32_t VectorTable[48];
-#elif defined   (  __GNUC__  )
-  __IO uint32_t VectorTable[48] __attribute__((section(".RAMVectorTable")));
-#elif defined ( __TASKING__ )
-  __IO uint32_t VectorTable[48] __at(0x20000000);
-#endif
+//#if   (defined ( __CC_ARM ))
+//  __IO uint32_t VectorTable[48] __attribute__((at(0x20000000)));
+//#elif (defined (__ICCARM__))
+//#pragma location = 0x20000000
+//  __no_init __IO uint32_t VectorTable[48];
+//#elif defined   (  __GNUC__  )
+//  __IO uint32_t VectorTable[48] __attribute__((section(".RAMVectorTable")));
+//#elif defined ( __TASKING__ )
+//  __IO uint32_t VectorTable[48] __at(0x20000000);
+//#endif
 
-void NVIC_SRAM(void)
-{
-	for(uint8_t i = 0; i < 48; i++)
-  {
-    VectorTable[i] = *(__IO uint32_t*)(APPLICATION_ADDRESS + (i<<2));
-  }
-	
-	uint32_t tmpctrl = 0;
-  /* Get CFGR1 register value */
-  tmpctrl = SYSCFG->CFGR1;
+//void NVIC_SRAM(void)
+//{
+//	for(uint8_t i = 0; i < 48; i++)
+//  {
+//    VectorTable[i] = *(__IO uint32_t*)(APPLICATION_ADDRESS + (i<<2));
+//  }
+//	
+//	uint32_t tmpctrl = 0;
+//  /* Get CFGR1 register value */
+//  tmpctrl = SYSCFG->CFGR1;
 
-  /* Clear MEM_MODE bits */
-  tmpctrl &= (uint32_t) (~SYSCFG_CFGR1_MEM_MODE);
+//  /* Clear MEM_MODE bits */
+//  tmpctrl &= (uint32_t) (~SYSCFG_CFGR1_MEM_MODE);
 
-  /* Set the new MEM_MODE bits value */
-  tmpctrl |= (uint32_t) SYSCFG_MemoryRemap_SRAM;
+//  /* Set the new MEM_MODE bits value */
+//  tmpctrl |= (uint32_t) SYSCFG_MemoryRemap_SRAM;
 
-  /* Set CFGR1 register with the new memory remap configuration */
-  SYSCFG->CFGR1 = tmpctrl;
-}
+//  /* Set CFGR1 register with the new memory remap configuration */
+//  SYSCFG->CFGR1 = tmpctrl;
+//}
 	
 /* USER CODE END 0 */
 
@@ -115,13 +115,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	NVIC_SRAM();
 
-  if(NVIC_GetPendingIRQ(SysTick_IRQn) != RESET)
-  {
-    HAL_NVIC_ClearPendingIRQ(SysTick_IRQn);
-		HAL_UART_Transmit(&huart1,"SysTick_IRQn\r\n",14,10);
-  }
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -130,25 +124,36 @@ int main(void)
   HAL_Init();
 
   /* Configure the system clock */
-  SystemClock_Config();
-
+	
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_I2C1_Init();
-  MX_TIM17_Init();
+//  MX_TIM17_Init();
   MX_USART1_UART_Init();
+	
+//	NVIC_SRAM();
 
+//  if(NVIC_GetPendingIRQ(SysTick_IRQn) != RESET)
+//  {
+//    HAL_NVIC_ClearPendingIRQ(SysTick_IRQn);
+//	}
+//	
+	SystemClock_Config();
+//	
+//	HAL_Delay(1000);
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_Base_Start_IT(&htim17);
-	
+//  HAL_TIM_Base_Start_IT(&htim17);
+	deviceMe.type = SLAVE_HARD_ADDR;
+	deviceMe.address = SLAVE_SOFT_ADDR;
 	cLEDs_Init();
-	sRGB_Init();
+//	sRGB_Init();
 
 	printf("I am sRGB\r\n");
 	HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
-
+	printf("----i2c state:0x%x\r\n", HAL_I2C_GetState(&hi2c1));
+		printf("----i2c error:0x%x\r\n", HAL_I2C_GetError(&hi2c1));
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -171,7 +176,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)  //定时中断
 
 	if(i2c_Data.cmd == 0x15 || i2c_Data.cmd == 0x16)
 	{
-		cLEDs_Toggle(R);
+		cLEDs_Toggle(G);
 		i2c_Data.cmd = 0x00;
 	}
 }
@@ -180,50 +185,85 @@ void HAL_SYSTICK_Callback(void)
 {
 	if(HAL_GetTick()%1000==0)
 	{
+//		printf("HAL_SYSTICK_Callback 1000ms\r\n");
 		cLEDs_Toggle(R);
-		
+//		HAL_I2C_DeInit(&hi2c1);        	//释放IO口为GPIO，复位句柄状态标志
+//		MX_I2C1_Init();          				//重新初始化I2C控制器
 		//如果I2C进入空闲状态，必须重启接收
-		if(HAL_I2C_GetState(&hi2c1)==HAL_I2C_STATE_READY)
+//		if(HAL_I2C_GetState(&hi2c1)==HAL_I2C_STATE_READY)
+//		{
+//			HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
+//		}
+	}
+	if((HAL_GetTick()%5000==0))
+	{
+		printf("----device is offline\r\n");
+		deviceMe.state = false;
+		printf("----i2c state:0x%x\r\n", HAL_I2C_GetState(&hi2c1));
+		printf("----i2c error:0x%x\r\n", HAL_I2C_GetError(&hi2c1));
+		
+		HAL_I2C_DeInit(&hi2c1);        	//释放IO口为GPIO，复位句柄状态标志
+
+		MX_I2C1_Init();          				//重新初始化I2C控制器
+		printf("----i2c re init\r\n");
+		HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
+
+	}
+}
+bool broadcast_step = false;
+
+void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+	//广播帧
+	// 广播帧步骤一：第一次收到广播帧
+	if((getI2CHardAddress(&i2c_Data) == I2C_BROADCAST_ADDR)&&(deviceMe.state == false))
+	{
+		deviceMe.command = 0x05;
+		i2cdata_update(&deviceMe, &i2c_Data);
+		HAL_I2C_Slave_Transmit_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
+		printf("----broadcast Received Data:\r\n");
+		broadcast_step = true;
+	}
+	
+	//数据帧
+	else
+	{
+		i2cdata_parse(&deviceMe,&i2c_Data);
+		if(checkCRC(&i2c_Data)==true)
 		{
+			if(getI2CHardAddress(&i2c_Data) == SLAVE_HARD_ADDR)
+			{
+				if(checkI2CSoftAddress(&deviceMe,&i2c_Data)==true)
+				{
+					// 广播帧步骤二：主模块收到地址后，确认帧
+					if(broadcast_step == true)
+					{
+						printf("----device is online\r\n");
+						broadcast_step = false;
+						deviceMe.state = true;	//@hiyangdong 2017-03-27 23:34:51 表示设备在线
+						
+					}
+					else
+					{
+						printf("OK:0x%x\r\n",i2c_Data.cmd);
+						sExecuteComand(&deviceMe, &i2c_Data);
+						i2cdata_update(&deviceMe, &i2c_Data);
+						HAL_I2C_Slave_Transmit_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
+					}
+				}
+			}
+		}
+		else
+		{
+			printf("======CRC ERROR\r\n");
 			HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
 		}
 	}
 }
 
-void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
-{
-	i2cdata_parse(&deviceMe,&i2c_Data);
-	if(checkCRC(&i2c_Data)==true)
-	{
-		//广播帧
-		if(getI2CHardAddress(&i2c_Data) == I2C_BROADCAST_ADDR)
-		{
-			deviceMe.command = 0x05;
-			i2cdata_update(&deviceMe, &i2c_Data);
-			HAL_I2C_Slave_Transmit_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
-		}
-		//数据帧
-		else if(getI2CHardAddress(&i2c_Data) == SLAVE_HARD_ADDR)
-		{
-			if(checkI2CSoftAddress(&deviceMe,&i2c_Data)==true)
-			{
-				printf("OK:0x%x\r\n",i2c_Data.cmd);
-				sExecuteComand(&deviceMe, &i2c_Data);
-				i2cdata_update(&deviceMe, &i2c_Data);
-				HAL_I2C_Slave_Transmit_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
-			}
-		}
-	}
-	else
-	{
-		printf("======CRC ERROR\r\n");
-		HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
-	}
-}
-
 void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
-	printf("HAL_I2C_SlaveTx OK------------\r\n");
+//	printf("HAL_I2C_SlaveTx OK------------\r\n");
 	HAL_I2C_Slave_Receive_DMA(&hi2c1,i2c_Data.frame,I2C_FRAME_SIZE);
 }
 

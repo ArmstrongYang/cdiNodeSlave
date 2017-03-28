@@ -37,8 +37,8 @@ typedef enum
 #define cLEDs_R_GPIO  GPIOA
 #define cLEDs_G_GPIO  GPIOA
 #define cLEDs_B_GPIO  GPIOA
-#define cLEDs_R_PIN 	GPIO_PIN_5
-#define cLEDs_G_PIN 	GPIO_PIN_6
+#define cLEDs_R_PIN 	GPIO_PIN_6
+#define cLEDs_G_PIN 	GPIO_PIN_5
 #define cLEDs_B_PIN 	GPIO_PIN_7
 
 void cLEDs_Init(void);

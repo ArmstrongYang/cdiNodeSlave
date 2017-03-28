@@ -115,13 +115,13 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	NVIC_SRAM();
+	
 
-  if(NVIC_GetPendingIRQ(SysTick_IRQn) != RESET)
-  {
-    HAL_NVIC_ClearPendingIRQ(SysTick_IRQn);
-		HAL_UART_Transmit(&huart1,"SysTick_IRQn\r\n",14,10);
-  }
+//  if(NVIC_GetPendingIRQ(SysTick_IRQn) != RESET)
+//  {
+//    HAL_NVIC_ClearPendingIRQ(SysTick_IRQn);
+//		HAL_UART_Transmit(&huart1,"SysTick_IRQn\r\n",14,10);
+//  }
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -130,8 +130,10 @@ int main(void)
   HAL_Init();
 
   /* Configure the system clock */
-  SystemClock_Config();
 
+	
+	NVIC_SRAM();
+	SystemClock_Config();
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
